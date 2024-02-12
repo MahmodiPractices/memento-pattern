@@ -17,7 +17,11 @@ class SnapshotFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'data' => json_encode([
+                'core' => rand(1, 10),
+                'ram' => rand(1, 8),
+                'storage' => rand(20, 200),
+            ])
         ];
     }
 }
