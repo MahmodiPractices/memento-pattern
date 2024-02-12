@@ -17,7 +17,10 @@ class MachineFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'name' => $this->faker->name,
+            'core' => rand(1, 12),
+            'ram' => rand(1, 8),
+            'storage' => rand(20, 200),
         ];
     }
 }
