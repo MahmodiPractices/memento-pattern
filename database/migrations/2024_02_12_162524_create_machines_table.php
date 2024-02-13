@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('machines', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
-            $table->integer('cores')->unsigned()->comment('Cpu cores count .');
+            $table->integer('core')->unsigned()->comment('Cpu cores count .');
             $table->integer('ram')->unsigned()->comment('Ram capacity in GB .');
             $table->integer('storage')->unsigned()->comment('Storage capacity in GB .');
             $table->timestamps();
