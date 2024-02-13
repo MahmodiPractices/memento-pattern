@@ -3,16 +3,17 @@
 namespace Tests\Feature\Database\Relation;
 
 use App\Models\Machine;
-use App\Models\Snapshot;
+use App\Models\Caretaker;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\Feature\Database\Traits\HasManyRelationTesting;
+use Tests\Feature\Database\Traits\MorphManyRelationTesting;
 use Tests\TestCase;
 
 class MachineTest extends TestCase
 {
-    use HasManyRelationTesting;
+    use MorphManyRelationTesting;
 
     /**
      * Defines model under test.
@@ -25,12 +26,19 @@ class MachineTest extends TestCase
     }
 
     /**
-     * Defines in has many relation models with model under test
+     * Defines in morph many relation models with model under test
      *
      * @return Model|array
      */
-    protected function inHasManyRelationModel(): Model|array
+    protected function inMorphManyRelationModel(): Model|array
     {
-        return new Snapshot();
+        return new Caretaker();
+    }
+
+    protected function inMorphManyRelationModelMethodNames(): array|null
+    {
+        return [
+            'snapshots' => new Caretaker()
+        ];
     }
 }

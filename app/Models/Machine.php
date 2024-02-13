@@ -4,22 +4,22 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Machine extends Model
 {
     use HasFactory;
 
     /**
-     * Relation method with Snapshot
+     * Relation method with Caretaker
      *
      * Each machine can have many snapshots while each snapshot
      * is belongs to specific machine
      *
-     * @return HasMany
+     * @return MorphMany
      */
-    public function snapshots():HasMany
+    public function snapshots():MorphMany
     {
-        return $this->hasMany(Snapshot::class);
+        return $this->morphMany(Caretaker::class, 'snapshotable');
     }
 }

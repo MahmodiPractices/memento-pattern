@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('snapshots', function (Blueprint $table) {
             $table->id();
-            $table->json('data');
-            $table->boolean('is_current')->default(0)->comment('Defines that is it snapshot current changes and was set on machine .');
-            $table->foreignId('machine_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+            $table->longText('memento');
+            $table->boolean('is_current')->default(0);
+            $table->morphs('snapshotable');
             $table->timestamps();
         });
     }
