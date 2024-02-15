@@ -1,0 +1,40 @@
+@extends('layout.master')
+@section('content')
+    <div class="card">
+        <h5 class="card-header heading-color">فهرست دستگاه ها</h5>
+        <div class="table-responsive text-nowrap">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>نام دستگاه</th>
+                    <th>تعداد هسته پردازشی</th>
+                    <th>حافظه موقت</th>
+                    <th>حافظه دائمی</th>
+                    <th>عمل‌ها</th>
+                </tr>
+                </thead>
+                <tbody class="table-border-bottom-0">
+                @foreach($machines as $machine)
+                    <tr>
+                        <td><strong>{{ $machine->name }}</strong></td>
+                        <td>{{ $machine->core }} هسته</td>
+                        <td>{{ $machine->ram }} گیگابایت</td>
+                        <td>{{ $machine->storage }} گیگابایت</td>
+                        <td>
+                            <div class="dropdown">
+                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                    <i class="bx bx-dots-vertical-rounded"></i>
+                                </button>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-edit-alt me-1"></i> ویرایش</a>
+                                    <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-trash me-1"></i> حذف</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+@endsection
