@@ -14,7 +14,7 @@ class MachineController extends Controller
     {
         $machines = Machine::all();
 
-        return view('machine.index', compact($machines));
+        return view('machine.index', compact('machines'));
     }
 
     /**
