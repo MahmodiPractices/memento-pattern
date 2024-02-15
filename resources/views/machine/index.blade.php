@@ -17,9 +17,9 @@
                 @foreach($machines as $machine)
                     <tr>
                         <td><strong>{{ $machine->name }}</strong></td>
-                        <td>{{ $machine->core }} هسته </td>
-                        <td>{{ $machine->ram }} GB</td>
-                        <td>{{ $machine->storage }} GB</td>
+                        <td>{{ $machine->core }} هسته</td>
+                        <td>{{ $machine->ram }} گیگابایت</td>
+                        <td>{{ $machine->storage }} گیگابایت</td>
                         <td>
                             <div class="dropdown">
                                 <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
