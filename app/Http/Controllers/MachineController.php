@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Machine;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 
 class MachineController extends Controller
@@ -10,7 +11,7 @@ class MachineController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index():View
     {
         $machines = Machine::all();
 
@@ -20,9 +21,9 @@ class MachineController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create():View
     {
-        //
+        return view('machine.create');
     }
 
     /**
@@ -46,7 +47,7 @@ class MachineController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        return view('machine.edit');
     }
 
     /**

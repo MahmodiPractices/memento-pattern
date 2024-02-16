@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fa" class="light-style layout-navbar-fixed layout-menu-fixed" dir="rtl" data-theme="theme-default" data-assets-path="assets/" data-template="vertical-menu-template">
+<html lang="fa" class="light-style layout-navbar-fixed layout-menu-fixed" dir="rtl" data-theme="theme-default" data-assets-path="/assets/" data-template="vertical-menu-template">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
@@ -37,6 +37,9 @@
     <script src="{{ asset('assets/vendor/js/template-customizer.js')}}"></script>
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script src="{{ asset('assets/js/config.js')}}"></script>
+
+    {{--optional styles --}}
+    @yield('style')
 </head>
 
 <body>
@@ -1485,5 +1488,8 @@
 
 <!-- Page JS -->
 <script src="{{ asset('assets/js/dashboards-analytics.js')}}"></script>
+
+{{--optional scripts --}}
+@yield('script')
 </body>
 </html>

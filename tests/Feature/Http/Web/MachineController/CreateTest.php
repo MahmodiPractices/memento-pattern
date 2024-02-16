@@ -12,7 +12,7 @@ class CreateTest extends TestCase
     /**
      * Create machine route name
      */
-    private const ROUTE_NAME = 'machine.create';
+    private const ROUTE_NAME = 'machine.store';
 
     private const MACHINE_TB_NAME = 'machines';
 
