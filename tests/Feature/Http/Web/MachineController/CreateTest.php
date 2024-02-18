@@ -28,7 +28,7 @@ class CreateTest extends TestCase
     {
         $res = $this->post(route(self::ROUTE_NAME));
 
-        $res->assertJsonValidationErrors(['name', 'core', 'ram', 'storage']);
+        $res->assertSessionHasErrors(['name', 'core', 'ram', 'storage']);
     }
 
     /**
@@ -49,7 +49,7 @@ class CreateTest extends TestCase
 
         $res = $this->post(route(self::ROUTE_NAME), $data);
 
-        $res->assertJsonValidationErrorFor('name');
+        $res->assertSessionHasErrorsIn('name');
     }
 
     /**
@@ -70,7 +70,7 @@ class CreateTest extends TestCase
 
         $res = $this->post(route(self::ROUTE_NAME), $data);
 
-        $res->assertJsonValidationErrorFor('name');
+        $res->assertSessionHasErrorsIn('name');
     }
 
     /**

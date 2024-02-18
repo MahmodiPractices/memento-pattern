@@ -10,7 +10,7 @@ class Alert extends Component
 {
     private const KEY_PREFIX = 'alert-';
 
-    public const LEVELS = ['success', 'warning', 'info', 'error'];
+    public const LEVELS = ['success', 'warning', 'info', 'danger'];
 
     /**
      * Stores all passed session alerts

@@ -10,6 +10,8 @@ class Machine extends Model
 {
     use HasFactory;
 
+    protected $guarded = ['id'];
+
     /**
      * Relation method with Caretaker
      *

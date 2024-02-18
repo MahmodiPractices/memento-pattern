@@ -2,12 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreMachineRequest;
 use App\Models\Machine;
+use App\Services\MachineService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 
 class MachineController extends Controller
 {
+    public function __construct(
+        private MachineService $service
+    ){}
+
     /**
      * Display a listing of the resource.
      */
@@ -29,9 +35,11 @@ class MachineController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreMachineRequest $request)
     {
-        //
+        return $this->service->create($request) ?
+            redirect(route('machine.index'))->with('alert-success', 'دستگاه جدید با موفقیت ایجاد شد !') :
+            redirect()->back()->with('alert-danger', 'وجود خطا در سرور !');
     }
 
     /**
