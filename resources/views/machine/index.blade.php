@@ -1,10 +1,11 @@
 @extends('layout.master')
 @section('content')
     <div class="col-12">
+        <x-alert/>
         <div class="card">
             <div class="d-flex flex-row justify-content-between align-items-center">
                 <h5 class="card-header heading-color">فهرست دستگاه ها</h5>
-                <a href="#" class="btn btn-outline-success m-3 px-1">
+                <a href="{{ route('machine.create') }}" class="btn btn-outline-success m-3 px-1">
                     <i class="bx bxs-plus-circle px-1"></i>
                     <span class="px-2">ایجاد دستگاه جدید</span>
                 </a>
