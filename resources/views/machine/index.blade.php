@@ -35,7 +35,13 @@
                                     </button>
                                     <div class="dropdown-menu">
                                         <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-edit-alt me-1"></i> ویرایش</a>
-                                        <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-trash me-1"></i> حذف</a>
+                                        <form action="{{ route('machine.destroy', $machine) }}" method="post">
+                                            @csrf
+                                            @method('delete')
+                                            <button type="submit" class="dropdown-item">
+                                                <i class="bx bx-trash me-1"></i> حذف
+                                            </button>
+                                        </form>
                                     </div>
                                 </div>
                             </td>

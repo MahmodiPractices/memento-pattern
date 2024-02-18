@@ -14,6 +14,9 @@ class CreateTest extends TestCase
      */
     private const ROUTE_NAME = 'machine.store';
 
+    /**
+     * The machines table name
+     */
     private const MACHINE_TB_NAME = 'machines';
 
     /**

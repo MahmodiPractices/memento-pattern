@@ -69,8 +69,12 @@ class MachineController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Machine $machine)
     {
-        //
+        return $this->service->delete($machine) ?
+            redirect()->route('machine.index')
+                ->with('alert-success', 'دستگاه با موفقیت حذف شد !') :
+            redirect()->back()
+                ->with('alert-danger', 'مشکلی پیش آمده است !');
     }
 }
