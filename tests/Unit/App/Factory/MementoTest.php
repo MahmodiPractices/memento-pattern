@@ -8,12 +8,12 @@ use PHPUnit\Framework\TestCase;
 class MementoTest extends TestCase
 {
     /**
-     * Asserts the Memento returns data to the originator
-     * and doesn't block originator
+     * Asserts the Memento restrict and block set data
+     * request for another classes
      *
      * @return void
      */
-    public function test_memento_returns_data_to_the_originator_and_does_not_block_this()
+    public function test_memento_throws_exception_when_set_data_request_comes_from_another_class_except_originator()
     {
         $memento = new Memento();
 
@@ -22,21 +22,6 @@ class MementoTest extends TestCase
         $this->expectException(\Exception::class);
 
         $proxy->set('my-name', 'Mr tester');
-    }
-
-    /**
-     * Asserts the Memento restrict and block set data
-     * request for another classes
-     *
-     * @return void
-     */
-    public function test_memento_throws_exception_when_set_data_request_comes_from_another_class_except_originator()
-    {
-        $memento = new Memento('Some\One');
-
-        $this->expectException(\Exception::class);
-
-        $memento->set('my-name', 'Mr tester .');
     }
 
     /**
@@ -101,6 +86,7 @@ class MementoTest extends TestCase
      * Asserts memento returns correct data after export and import operations
      *
      * @return void
+     * @throws \Exception
      */
     public function test_memento_returns_correct_data_after_import_and_export()
     {
