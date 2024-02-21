@@ -81,7 +81,7 @@ class CreateTest extends TestCase
      *
      * @return void
      */
-    public function test_new_machine_stores_in_db_with_absolute_values()
+    public function test_new_machine_stores_in_db_with_absolute_values_and_sets_success_flush()
     {
         $data = [
             'name' => 'my-machine',
@@ -91,6 +91,8 @@ class CreateTest extends TestCase
         ];
 
         $res = $this->post(route(self::ROUTE_NAME), $data);
+
+        $res->assertSessionHas('alert-success');
 
         $this->assertDatabaseHas(self::MACHINE_TB_NAME, $data);
     }
