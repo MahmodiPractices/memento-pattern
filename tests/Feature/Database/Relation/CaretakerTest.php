@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Database\Relation;
 
-use App\Models\Caretaker;
+use App\Models\Snapshot;
 use App\Models\Machine;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -20,7 +20,7 @@ class CaretakerTest extends TestCase
     public function test_morphed_to_many_relation_with_machine()
     {
         // get currentModel
-        $caretaker = new Caretaker();
+        $caretaker = new Snapshot();
 
         $machine = new Machine();
 

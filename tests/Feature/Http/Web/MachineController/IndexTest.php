@@ -25,6 +25,6 @@ class IndexTest extends TestCase
 
         $res = $this->get(route(self::ROUTE_NAME));
 
-        $res->assertViewHasAll(['machines' => $machines->toArray()]);
+        $res->assertViewHasAll(['machines' => $machines]);
     }
 }

@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreMachineRequest;
+use App\Http\Requests\UpdateMachineRequest;
 use App\Models\Machine;
-use App\Services\MachineService;
+use App\Services\Machine\MachineService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 
@@ -53,17 +54,21 @@ class MachineController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Machine $machine)
     {
-        return view('machine.edit');
+        return view('machine.edit', compact('machine'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateMachineRequest $request, Machine $machine)
     {
-        //
+        return $this->service->update($machine, $request) ?
+            redirect()->route('machine.index')
+                ->with('alert-success', "دستگاه {$machine->name} با موفقیت ویرایش شد ."):
+            redirect()->back()
+                ->with('alert-danger', 'مشکلی پیش آمده است !');
     }
 
     /**
