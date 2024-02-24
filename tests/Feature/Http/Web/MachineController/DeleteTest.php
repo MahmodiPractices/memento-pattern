@@ -3,6 +3,7 @@
 namespace Tests\Feature\Http\Web\MachineController;
 
 use App\Models\Machine;
+use App\Models\Snapshot;
 use App\Services\Machine\MachineService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -22,19 +23,29 @@ class DeleteTest extends TestCase
     private const MACHINE_TB_NAME = 'machines';
 
     /**
-     * Asserts delete method controller removes message from db
+     * Asserts delete method controller removes message from db and its snapshots
      *
      * @return void
      */
-    public function test_machine_deletes_from_database()
+    public function test_machine_deletes_from_database_and_its_snapshots()
     {
         $machine = Machine::factory()->create();
+
+        $snapshotCount = rand(1, 10);
+
+        $snapshots = Snapshot::factory()->for($machine, 'snapshotable')->count($snapshotCount)->create();
 
         $res = $this->delete(route(self::ROUTE_NAME, $machine));
 
         $res->assertRedirect();
 
         $this->assertDatabaseMissing(self::MACHINE_TB_NAME, $machine->getAttributes());
+
+        foreach ($snapshots as $snapshot)
+            $this->assertDatabaseMissing($snapshots[0]->getTable(), [
+                'id' => $snapshot->id,
+                'memento' => $snapshot->memento
+            ]);
     }
 
     /**

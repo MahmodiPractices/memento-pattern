@@ -58,6 +58,16 @@ class TrackPad
     }
 
     /**
+     * Deletes all machine snapshots from database
+     *
+     * @return bool
+     */
+    public function forgetHistory():bool
+    {
+        return $this->caretaker->getMachine()->snapshots()->delete();
+    }
+
+    /**
      * Sets is_current field value 0 if there is current snapshot for machine
      *
      * @return void

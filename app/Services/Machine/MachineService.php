@@ -6,6 +6,8 @@ use App\Http\Requests\StoreMachineRequest;
 use App\Http\Requests\UpdateMachineRequest;
 use App\Models\Machine;
 use App\Models\MachineAbstractions\Memento;
+use App\Services\Snapshot\SnapshotService;
+use Illuminate\Contracts\Container\BindingResolutionException;
 
 class MachineService
 {
@@ -40,9 +42,14 @@ class MachineService
      *
      * @param Machine $machine
      * @return bool
+     * @throws BindingResolutionException
      */
     public function delete(Machine $machine):bool
     {
+        $caretaker = app()->make(SnapshotService::class);
+
+        $caretaker->tracker($machine)->forgetHistory();
+
         return $machine->delete();
     }
 
