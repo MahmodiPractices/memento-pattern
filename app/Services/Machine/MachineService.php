@@ -1,12 +1,24 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Machine;
 
 use App\Http\Requests\StoreMachineRequest;
+use App\Http\Requests\UpdateMachineRequest;
 use App\Models\Machine;
+use App\Models\MachineAbstractions\Memento;
 
 class MachineService
 {
+
+    /**
+     * Singleton property
+     *
+     * Uses for cache built instances and avoiding rebuild
+     *
+     * @var array
+     */
+    private array $singleton;
+
     /**
      * Create new machine
      *
@@ -33,4 +45,17 @@ class MachineService
     {
         return $machine->delete();
     }
+
+    /**
+     * Update machine
+     *
+     * @param Machine $machine
+     * @param UpdateMachineRequest $request
+     * @return bool
+     */
+    public function update(Machine $machine, UpdateMachineRequest $request):bool
+    {
+        return $machine->update($request->except($machine->getGuarded()));
+    }
+
 }

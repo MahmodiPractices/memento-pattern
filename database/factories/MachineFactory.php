@@ -18,9 +18,9 @@ class MachineFactory extends Factory
     {
         return [
             'name' => $this->faker->name,
-            'core' => rand(1, 12),
-            'ram' => rand(1, 8),
-            'storage' => rand(20, 200),
+            'core' => rand(2, 12),
+            'ram' => rand(2, 8),
+            'storage' => rand(20, 100),
         ];
     }
 }

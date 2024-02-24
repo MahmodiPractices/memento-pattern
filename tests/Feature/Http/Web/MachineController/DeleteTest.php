@@ -3,7 +3,7 @@
 namespace Tests\Feature\Http\Web\MachineController;
 
 use App\Models\Machine;
-use App\Services\MachineService;
+use App\Services\Machine\MachineService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use PHPUnit\Framework\MockObject\Exception;

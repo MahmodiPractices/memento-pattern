@@ -34,7 +34,7 @@
                                         <i class="bx bx-dots-vertical-rounded"></i>
                                     </button>
                                     <div class="dropdown-menu">
-                                        <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-edit-alt me-1"></i> ویرایش</a>
+                                        <a class="dropdown-item" href="{{ route('machine.edit', $machine) }}"><i class="bx bx-edit-alt me-1"></i> ویرایش</a>
                                         <form action="{{ route('machine.destroy', $machine) }}" method="post">
                                             @csrf
                                             @method('delete')

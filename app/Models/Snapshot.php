@@ -3,13 +3,13 @@
 namespace App\Models;
 
 use App\Models\CaretakerAbstractions\TrackPad;
-use Database\Factories\CaretakerFactory;
+use Database\Factories\SnapshotFactory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-class Caretaker extends Model
+class Snapshot extends Model
 {
     use HasFactory;
 
@@ -20,12 +20,12 @@ class Caretaker extends Model
      *
      * @var array
      */
-    private array $singleton;
+    private static array $singleton;
 
     /**
-     * @var string
+     * @var string[] 
      */
-    protected $table = 'snapshots';
+    protected $guarded = ['id'];
 
     /**
      * @var string[]
@@ -41,11 +41,11 @@ class Caretaker extends Model
      */
     protected static function newFactory():Factory
     {
-        return CaretakerFactory::new();
+        return SnapshotFactory::new();
     }
 
     /**
-     * Snapshot-able polymorph relation
+     * MementoObject-able polymorph relation
      *
      * @return MorphTo
      */
@@ -64,20 +64,4 @@ class Caretaker extends Model
             set: fn (string $value) => serialize($value),
         );
     }
-
-    /**
-     * Returns caretaker tracker abstraction
-     *
-     * Placed track base methods undo, redo sample in this abstraction.
-     *
-     * @return TrackPad
-     */
-    public function tracker():TrackPad
-    {
-        if(!isset($this->singleton[TrackPad::class]))
-            $this->singleton[TrackPad::class] = new TrackPad($this);
-
-        return $this->singleton[TrackPad::class];
-    }
-
 }

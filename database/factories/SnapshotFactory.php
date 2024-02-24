@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Factory\Memento;
+use App\Factory\MementoObject;
 use App\Models\Machine;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Model;
@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @extends Factory
  */
-class CaretakerFactory extends Factory
+class SnapshotFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -21,7 +21,7 @@ class CaretakerFactory extends Factory
     {
         return [
             'memento' => $this->faker->realText,
-            'is_current' => rand(0, 1),
+            'is_current' => 0,
             'snapshotable_type' => $this->faker->randomElement([Machine::class]),
             'snapshotable_id' => Machine::factory(),
         ];
@@ -40,22 +40,9 @@ class CaretakerFactory extends Factory
     }
 
     /**
-     * Indicate new snapshot's model
-     */
-    public function model(Model $model): Factory
-    {
-        return $this->state(function (array $attributes) use ($model) {
-            return [
-                'snapshotable_type' => $model::class,
-                'snapshotable_id' => $model->id,
-            ];
-        });
-    }
-
-    /**
      * Indicate new snapshot's memento
      */
-    public function memento(Memento $memento): Factory
+    public function memento(MementoObject $memento): Factory
     {
         return $this->state(function (array $attributes) use ($memento) {
             return [

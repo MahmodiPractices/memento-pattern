@@ -8,7 +8,7 @@ namespace App\Factory;
 
 use Exception;
 
-class Memento
+class MementoObject
 {
     /**
      * Originator definition in export string
@@ -48,7 +48,7 @@ class Memento
 
 
     /**
-     * Creates new Memento instance.
+     * Creates new MementoObject instance.
      *
      * @param string|null $originator The originator class name.
      * @throws Exception
@@ -92,7 +92,7 @@ class Memento
     private function autoIdentifyOriginator():string
     {
          if(!$originator = $this->getObjectCaller())
-             throw new Exception('Can not identify originator for make new Memento !');
+             throw new Exception('Can not identify originator for make new MementoObject !');
 
          return $originator;
     }

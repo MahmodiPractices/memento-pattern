@@ -2,20 +2,20 @@
 
 namespace Tests\Unit\App\Factory;
 
-use App\Factory\Memento;
+use App\Factory\MementoObject;
 use PHPUnit\Framework\TestCase;
 
 class MementoTest extends TestCase
 {
     /**
-     * Asserts the Memento restrict and block set data
+     * Asserts the MementoObject restrict and block set data
      * request for another classes
      *
      * @return void
      */
     public function test_memento_throws_exception_when_set_data_request_comes_from_another_class_except_originator()
     {
-        $memento = new Memento();
+        $memento = new MementoObject();
 
         $proxy = new MementoProxy($memento);
 
@@ -25,14 +25,14 @@ class MementoTest extends TestCase
     }
 
     /**
-     * Asserts the Memento restrict and block get data
+     * Asserts the MementoObject restrict and block get data
      * request for another classes
      *
      * @return void
      */
     public function test_memento_throws_exception_when_get_data_request_comes_from_another_class_except_originator()
     {
-        $memento = new Memento('Some\One');
+        $memento = new MementoObject('Some\One');
 
         $this->expectException(\Exception::class);
 
@@ -40,14 +40,14 @@ class MementoTest extends TestCase
     }
 
     /**
-     * Asserts the Memento restrict and block export data
+     * Asserts the MementoObject restrict and block export data
      * request for another classes
      *
      * @return void
      */
     public function test_memento_throws_exception_when_export_data_request_comes_from_another_class_except_originator()
     {
-        $memento = new Memento();
+        $memento = new MementoObject();
 
         $memento->set('my-name', 'Mr tester');
 
@@ -59,7 +59,7 @@ class MementoTest extends TestCase
     }
 
     /**
-     * Asserts the Memento throws an exception when
+     * Asserts the MementoObject throws an exception when
      * object that sends import request is not originator of
      * exported data
      *
@@ -67,7 +67,7 @@ class MementoTest extends TestCase
      */
     public function test_memento_throws_exception_when_import_data_request_comes_from_another_class_except_originator()
     {
-        $memento = new Memento();
+        $memento = new MementoObject();
 
         $memento->set('my-name', 'Mr tester');
 
@@ -94,13 +94,13 @@ class MementoTest extends TestCase
             'my-name' => 'Mr tester'
         ];
 
-        $memento = new Memento();
+        $memento = new MementoObject();
 
         $memento->set($data);
 
         $export = $memento->export();
 
-        $memento = new Memento();
+        $memento = new MementoObject();
 
         $memento->import($export);
 
@@ -121,7 +121,7 @@ class MementoTest extends TestCase
             'level' => 'important'
         ];
 
-        $memento = new Memento();
+        $memento = new MementoObject();
 
         $memento->set($data);
 
@@ -137,24 +137,24 @@ class MementoTest extends TestCase
 
 
 /**
- * Proxy between test class and Memento for testing restrict originator access
+ * Proxy between test class and MementoObject for testing restrict originator access
  */
 class MementoProxy
 {
     /**
      * @param string|null $originator For define custom originator class name
-     * @return Memento
+     * @return MementoObject
      */
-    public static function buildMemento(?string $originator = null):Memento
+    public static function buildMemento(?string $originator = null):MementoObject
     {
-        return new Memento($originator);
+        return new MementoObject($originator);
     }
 
     /**
-     * @param Memento $memento
+     * @param MementoObject $memento
      */
     public function __construct(
-        public Memento $memento
+        public MementoObject $memento
     ){}
 
     /**

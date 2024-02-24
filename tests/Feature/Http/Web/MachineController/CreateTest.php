@@ -62,18 +62,16 @@ class CreateTest extends TestCase
      */
     public function test_is_numeric_validation()
     {
-        $machine = Machine::factory()->create();
-
         $data = [
-            'name' => $machine->name,
-            'core' => 2,
-            'ram' => 2,
-            'storage' => 20,
+            'name' => 'my-machine',
+            'core' => 'my-core',
+            'ram' => 'my-ram',
+            'storage' => 'my-storage',
         ];
 
         $res = $this->post(route(self::ROUTE_NAME), $data);
 
-        $res->assertSessionHasErrorsIn('name');
+        $res->assertSessionHasErrors(['core', 'ram', 'storage']);
     }
 
     /**

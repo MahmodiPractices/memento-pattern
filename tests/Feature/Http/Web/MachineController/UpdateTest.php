@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Http\Web\MachineController;
 
-use App\Models\Caretaker;
+use App\Models\Snapshot;
 use App\Models\Machine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -48,8 +48,10 @@ class UpdateTest extends TestCase
     {
         $machine = Machine::factory()->create();
 
+        $other = Machine::factory()->create();
+
         $data = [
-            'name' => $machine->name,
+            'name' => $other->name,
             'core' => 2,
             'ram' => 2,
             'storage' => 20,
@@ -70,15 +72,15 @@ class UpdateTest extends TestCase
         $machine = Machine::factory()->create();
 
         $data = [
-            'name' => $machine->name,
-            'core' => 2,
-            'ram' => 2,
-            'storage' => 20,
+            'name' => 'my-machine',
+            'core' => 'my-core',
+            'ram' => 'my-ram',
+            'storage' => 'my-storage',
         ];
 
         $res = $this->put(route(self::ROUTE_NAME, $machine), $data);
 
-        $res->assertSessionHasErrorsIn('name');
+        $res->assertSessionHasErrors(['core', 'ram', 'storage']);
     }
 
     /**
@@ -109,11 +111,11 @@ class UpdateTest extends TestCase
     {
         $machine = Machine::factory()->create();
 
-        Caretaker::factory()->for($machine, 'snapshotable')->count(5)->create();
+        Snapshot::factory()->for($machine, 'snapshotable')->count(5)->create();
 
-        $currentSnapshot = Caretaker::factory()->for($machine, 'snapshotable')->current()->create();
+        $currentSnapshot = Snapshot::factory()->for($machine, 'snapshotable')->current()->create();
 
-        $shouldNotRemoveSnapshots = Caretaker::factory()->for($machine, 'snapshotable')->count(5)->create();
+        $shouldNotRemoveSnapshots = Snapshot::factory()->for($machine, 'snapshotable')->count(5)->create();
 
         $data = [
             'name' => $machine->name,
@@ -146,16 +148,18 @@ class UpdateTest extends TestCase
     {
         $machine = Machine::factory()->create();
 
-        Caretaker::factory()->for($machine, 'snapshotable')->count(5)->create();
+        Snapshot::factory()->for($machine, 'snapshotable')->count(5)->create();
 
-        $currentSnapshot = Caretaker::factory()->for($machine, 'snapshotable')->current()->create();
+        $currentSnapshot = Snapshot::factory()->for($machine, 'snapshotable')->current()->create();
 
-        $shouldNotRemoveSnapshots = Caretaker::factory()->for($machine, 'snapshotable')->count(5)->create();
+        $this->travel(1)->hour();
+
+        $shouldRemoveSnapshots = Snapshot::factory()->for($machine, 'snapshotable')->count(5)->create();
 
         $data = [
             'name' => $this->faker->name,
             'core' =>  rand(1, 12),
-            'ram' =>  rand(1, 8),
+            'ram' =>  rand(2, 8),
             'storage' =>  rand(10, 100),
         ];
 
@@ -169,7 +173,7 @@ class UpdateTest extends TestCase
             'is_current' => 1
         ]);
 
-        foreach ($shouldNotRemoveSnapshots as $snapshot)
+        foreach ($shouldRemoveSnapshots as $snapshot)
             $this->assertDatabaseMissing($snapshot->getTable(), [
                 'id' => $snapshot->id,
                 'snapshotable_id' => $machine->id,
@@ -185,12 +189,12 @@ class UpdateTest extends TestCase
 
         $machine = Machine::factory()->create();
 
-        $snapshots = Caretaker::factory()->for($machine, 'snapshotable')->count($fakeSnapshotsCount)->create();
+        $snapshots = Snapshot::factory()->for($machine, 'snapshotable')->count($fakeSnapshotsCount)->create();
 
         $data = [
             'name' => $this->faker->name,
-            'core' =>  rand(1, 12),
-            'ram' =>  rand(1, 8),
+            'core' =>  rand(2, 12),
+            'ram' =>  rand(2, 8),
             'storage' =>  rand(10, 100),
         ];
 
@@ -198,7 +202,16 @@ class UpdateTest extends TestCase
 
         $res->assertSessionHas('alert-success');
 
-        $this->assertDatabaseCount($snapshots[0]->getTable(), $fakeSnapshotsCount++);
+        $fakeSnapshotsCount++;
+
+        $this->assertDatabaseCount($snapshots[0]->getTable(), $fakeSnapshotsCount);
+
+        foreach ($snapshots as $snapshot)
+            $this->assertDatabaseHas($snapshot->getTable() , [
+                'id' => $snapshot->id,
+                'is_current' => $snapshot->is_current,
+                'created_at' => $snapshot->created_at,
+            ]);
     }
 
     public function test_update_machine_stores_changed_values_in_database_and_works_ok()
@@ -207,13 +220,13 @@ class UpdateTest extends TestCase
 
         $data = [
             'name' => $this->faker->name,
-            'core' =>  rand(1, 12),
-            'ram' =>  rand(1, 8),
+            'core' =>  rand(2, 12),
+            'ram' =>  rand(2, 8),
             'storage' =>  rand(10, 100),
         ];
 
         $res = $this->put(route(self::ROUTE_NAME, $machine), $data);
 
-        $this->assertDatabaseHas($machine->getTable(), array_merge(['id' => $machine], $data));
+        $this->assertDatabaseHas($machine->getTable(), array_merge(['id' => $machine->id], $data));
     }
 }

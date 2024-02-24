@@ -3,7 +3,7 @@
 namespace Tests\Feature\Database\Relation;
 
 use App\Models\Machine;
-use App\Models\Caretaker;
+use App\Models\Snapshot;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -32,13 +32,13 @@ class MachineTest extends TestCase
      */
     protected function inMorphManyRelationModel(): Model|array
     {
-        return new Caretaker();
+        return new Snapshot();
     }
 
     protected function inMorphManyRelationModelMethodNames(): array|null
     {
         return [
-            'snapshots' => new Caretaker()
+            'snapshots' => new Snapshot()
         ];
     }
 }
