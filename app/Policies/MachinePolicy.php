@@ -13,7 +13,15 @@ class MachinePolicy
      */
     public function undo(?User $user, Machine $machine): bool
     {
-        return false;
+        if(!$machine->snapshots()->count())
+            return false;
+
+        if($current = $machine->currentSnapshot())
+            return (bool)$machine->snapshots()
+                ->where('created_at', '<', $current->created_at)
+                ->count();
+
+        return true;
     }
 
     /**
