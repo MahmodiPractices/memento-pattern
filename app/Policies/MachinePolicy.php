@@ -29,6 +29,14 @@ class MachinePolicy
      */
     public function redo(?User $user, Machine $machine): bool
     {
-        return true;
+        if(!$machine->snapshots()->count())
+            return false;
+
+        if(!$current = $machine->currentSnapshot())
+            return false;
+
+        return (bool)$machine->snapshots()
+            ->where('created_at', '>', $current->created_at)
+            ->count();
     }
 }
