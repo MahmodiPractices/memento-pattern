@@ -6,7 +6,7 @@ use App\Models\Machine;
 use App\Services\Snapshot\Abstraction\TrackPad;
 
 
-class SnapshotService
+class Caretaker
 {
     /**
      * @var Machine

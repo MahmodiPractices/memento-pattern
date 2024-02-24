@@ -4,13 +4,13 @@ namespace App\Observers;
 
 use App\Models\Machine;
 use App\Services\Machine\MachineService;
-use App\Services\Snapshot\SnapshotService;
+use App\Services\Snapshot\Caretaker;
 
 class MachineObserver
 {
     public function __construct(
         private MachineService $machineService,
-        private SnapshotService $snapshotService,
+        private Caretaker      $snapshotService,
     ){}
 
     /**

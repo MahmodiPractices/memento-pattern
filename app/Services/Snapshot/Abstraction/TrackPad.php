@@ -3,17 +3,17 @@
 namespace App\Services\Snapshot\Abstraction;
 
 use App\Models\Snapshot;
-use App\Services\Snapshot\SnapshotService;
+use App\Services\Snapshot\Caretaker;
 
 class TrackPad
 {
     /**
      * Bridge
      *
-     * @param SnapshotService $caretaker
+     * @param Caretaker $caretaker
      */
     public function __construct(
-        private SnapshotService $caretaker
+        private Caretaker $caretaker
     ){}
 
     /**
