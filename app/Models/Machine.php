@@ -39,7 +39,9 @@ class Machine extends Model
      */
     public function store():bool
     {
-        $memento = new MementoObject();
+        $memento = app()->make(MementoObject::class, [
+            'originator'  => self::class
+        ]);
 
         foreach ($this->attributes as $key => $value)
             $memento->set($key, $value);
@@ -58,7 +60,9 @@ class Machine extends Model
      */
     public function restore(string $mementoExport):bool
     {
-        $memento = app()->make(MementoObject::class);
+        $memento = app()->make(MementoObject::class, [
+            'originator'  => self::class
+        ]);
 
         $memento->import($mementoExport);
 
@@ -67,8 +71,6 @@ class Machine extends Model
                 continue;
 
             $value = $memento->get($key);
-
-            dump($value);
 
             $this->{$key} = $value;
         }

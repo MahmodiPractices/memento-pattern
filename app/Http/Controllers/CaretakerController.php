@@ -3,11 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\Machine;
+use App\Services\Snapshot\Caretaker;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class CaretakerController extends Controller
 {
+    public function __construct(
+        private Caretaker $caretaker
+    )
+    {}
+
     /**
      * Undo changes
      *
@@ -16,7 +22,13 @@ class CaretakerController extends Controller
      */
     public function undo(Machine $machine):RedirectResponse
     {
+        $redirect = redirect()->back();
 
+        return $this->caretaker
+            ->tracker($machine)
+            ->undo() ?
+                $redirect->with('alert-success', 'عملیات واگرد انجام شد !') :
+                $redirect->with('alert-danger', 'خطایی پیش آمده است !');
     }
 
     /**

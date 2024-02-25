@@ -4,6 +4,8 @@ namespace App\Services\Snapshot\Abstraction;
 
 use App\Models\Snapshot;
 use App\Services\Snapshot\Caretaker;
+use Illuminate\Support\Facades\Log;
+use Mockery\Exception;
 
 class TrackPad
 {
@@ -20,10 +22,33 @@ class TrackPad
      * Undo changes operations
      *
      * @return bool
+     * @throws \Exception
      */
     public function undo(): bool
     {
+        $machine = $this->caretaker->getMachine();
 
+        try {
+            if(!$machine->hasCurrentSnapshot()){
+
+                $mementoExport = $machine->snapshots()
+                    ->latest()->first()->memento;
+            } else {
+                $current = $machine->snapshots()
+                    ->where('is_current', 1)->latest()->first();
+
+                $mementoExport = $machine->snapshots()
+                    ->where('created_at', '<', $current->created_at)
+                    ->latest()->firstOrFail()->memento;
+            }
+
+            return $machine->restore($mementoExport);
+
+        } catch (Exception $e){
+            Log::error("Undo operation failed for {$machine->id} machine id : " . $e->getMessage());
+
+            return false;
+        }
     }
 
     /**

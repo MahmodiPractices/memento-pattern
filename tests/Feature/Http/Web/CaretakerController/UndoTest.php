@@ -2,11 +2,14 @@
 
 namespace Tests\Feature\Http\Web\CaretakerController;
 
+use App\Factory\MementoObject;
 use App\Models\Machine;
 use App\Models\Snapshot;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Str;
+use PHPUnit\Framework\MockObject\Exception;
 use Tests\TestCase;
 
 class UndoTest extends TestCase
@@ -29,7 +32,48 @@ class UndoTest extends TestCase
     }
 
     /**
+     * @param Machine $machine
+     * @return MementoObject
+     * @throws Exception
+     */
+    private function mementoObjectMockBuilder(Machine $machine):MementoObject
+    {
+        $mock = $this->createMock(MementoObject::class);
+
+        $mock->method('__call')
+            ->willReturnCallback(function($name, $args) use ($machine){
+                if($name == 'set')
+                    return;
+
+                if($name == 'get')
+                    if(isset($machine->{$args[0]}))
+                        return $machine->{$args[0]};
+
+                if($name == 'export')
+                    return Str::random();
+
+                return;
+            });
+
+        return $mock;
+    }
+
+    /**
      * @return void
+     * @throws Exception
+     */
+    private function injectMementoObjectMockToContainer(?Machine $machine  = null)
+    {
+        $machine = $machine ?? Machine::factory()->make();
+
+        $this->app->bind(MementoObject::class, function($app, $parameters) use ($machine){
+            return $this->mementoObjectMockBuilder($machine);
+        });
+    }
+
+    /**
+     * @return void
+     * @throws Exception
      */
     public function test_makes_new_snapshot_when_there_is_no_any_current_snapshot_in_the_table()
     {
@@ -41,9 +85,11 @@ class UndoTest extends TestCase
 
         $this->assertDatabaseCount($snapshots[0]->getTable(), $snapshotsCount);
 
+        $this->injectMementoObjectMockToContainer();
+
         $res = $this->post(route(self::ROUTE_NAME, $machine));
 
-        $res->assertOk();
+        $res->assertRedirect();
 
         $snapshotsCount = $snapshotsCount + 1;
 

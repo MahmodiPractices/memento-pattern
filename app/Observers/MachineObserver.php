@@ -28,8 +28,6 @@ class MachineObserver
     {
         if(!$machine->hasCurrentSnapshot())
             $machine->store();
-
-
     }
 
     /**
