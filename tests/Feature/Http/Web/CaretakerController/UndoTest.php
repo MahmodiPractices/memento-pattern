@@ -19,6 +19,13 @@ class UndoTest extends TestCase
      */
     private const ROUTE_NAME = 'caretaker.undo';
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->injectMementoObjectMockToContainer();
+    }
+
     /**
      * Since that undo operation needs non-empty snapshot table,
      * this method is in charge to fill the table
@@ -77,8 +84,6 @@ class UndoTest extends TestCase
      */
     public function test_makes_new_snapshot_when_there_is_no_any_current_snapshot_in_the_table()
     {
-        $this->injectMementoObjectMockToContainer();
-
         $machine = Machine::factory()->create();
 
         $snapshots = $this->seedSnapshots($machine);
@@ -102,8 +107,6 @@ class UndoTest extends TestCase
      */
     public function test_does_not_make_new_snapshot_when_there_is_a_current_snapshot_in_the_table()
     {
-        $this->injectMementoObjectMockToContainer();
-
         $machine = Machine::factory()->create();
 
         $snapshotsCount = count($this->seedSnapshots($machine));
@@ -127,11 +130,10 @@ class UndoTest extends TestCase
 
     /**
      * @return void
+     * @throws Exception
      */
     public function test_set_first_snapshot_before_current_and_make_that_current()
     {
-        $this->injectMementoObjectMockToContainer();
-
         $machine = Machine::factory()->create();
 
         $shouldSet = Snapshot::factory()->for($machine, 'snapshotable')->create();
@@ -176,6 +178,6 @@ class UndoTest extends TestCase
 
         $updatedMachine = Machine::find($machine->id);
 
-        $this->assertNotSame($machine->values(), $updatedMachine->values());
+        $this->assertNotSame($machine->getAttributes(), $updatedMachine->getAttributes());
     }
 }

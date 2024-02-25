@@ -33,6 +33,8 @@ class TrackPad
 
                 $shouldSetSnapshot = $machine->snapshots()
                     ->latest()->firstOrFail();
+
+                $machine->store();
             } else {
                 $current = $machine->snapshots()
                     ->where('is_current', 1)->latest()->firstOrFail();
