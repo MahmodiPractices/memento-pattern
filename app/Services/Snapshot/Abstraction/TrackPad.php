@@ -31,18 +31,22 @@ class TrackPad
         try {
             if(!$machine->hasCurrentSnapshot()){
 
-                $mementoExport = $machine->snapshots()
-                    ->latest()->first()->memento;
+                $shouldSetSnapshot = $machine->snapshots()
+                    ->latest()->firstOrFail();
             } else {
                 $current = $machine->snapshots()
-                    ->where('is_current', 1)->latest()->first();
+                    ->where('is_current', 1)->latest()->firstOrFail();
 
-                $mementoExport = $machine->snapshots()
+                $shouldSetSnapshot = $machine->snapshots()
                     ->where('created_at', '<', $current->created_at)
-                    ->latest()->firstOrFail()->memento;
+                    ->latest()->firstOrFail();
             }
 
-            return $machine->restore($mementoExport);
+            $shouldSetSnapshot->update([
+                'is_current' => 1
+            ]);
+
+            return $machine->restore($shouldSetSnapshot->memento);
 
         } catch (Exception $e){
             Log::error("Undo operation failed for {$machine->id} machine id : " . $e->getMessage());

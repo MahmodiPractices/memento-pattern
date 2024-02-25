@@ -130,13 +130,15 @@ class UndoTest extends TestCase
      */
     public function test_set_first_snapshot_before_current_and_make_that_current()
     {
+        $this->injectMementoObjectMockToContainer();
+
         $machine = Machine::factory()->create();
 
-        $shouldSet = Snapshot::factory()->for($machine)->create();
+        $shouldSet = Snapshot::factory()->for($machine, 'snapshotable')->create();
 
         $this->travel(1)->hour();
 
-        Snapshot::factory()->for($machine)->current()->create();
+        Snapshot::factory()->for($machine, 'snapshotable')->current()->create();
 
         $this->travel(1)->hour();
 
@@ -144,15 +146,15 @@ class UndoTest extends TestCase
 
         $res = $this->post(route(self::ROUTE_NAME, $machine));
 
-        $res->assertOk();
+        $res->assertRedirect();
 
         $updatedMachine = Machine::find($machine->id);
 
-        $this->assertNotSame($machine->values(), $updatedMachine->values());
+        $this->assertNotSame($machine->getAttributes(), $updatedMachine->getAttributes());
 
         $shouldSet = Snapshot::find($shouldSet->id);
 
-        $this->assertTrue($shouldSet->is_current);
+        $this->assertTrue((bool)$shouldSet->is_current);
     }
 
     /**
@@ -166,7 +168,7 @@ class UndoTest extends TestCase
 
         $res = $this->post(route(self::ROUTE_NAME, $machine));
 
-        $res->assertOk();
+        $res->assertRedirect();
 
         $snapshotsCount += 1;
 
