@@ -27,7 +27,7 @@ class MachineService
      * @param StoreMachineRequest $request
      * @return Machine|false
      */
-    public function create(StoreMachineRequest $request):Machine|false
+    public function create(StoreMachineRequest $request): Machine|false
     {
         return Machine::create([
             'name' => $request->input('name'),
@@ -44,7 +44,7 @@ class MachineService
      * @return bool
      * @throws BindingResolutionException
      */
-    public function delete(Machine $machine):bool
+    public function delete(Machine $machine): bool
     {
         $caretaker = app()->make(Caretaker::class);
 
@@ -59,9 +59,18 @@ class MachineService
      * @param Machine $machine
      * @param UpdateMachineRequest $request
      * @return bool
+     * @throws BindingResolutionException
      */
-    public function update(Machine $machine, UpdateMachineRequest $request):bool
+    public function update(Machine $machine, UpdateMachineRequest $request): bool
     {
+        if($machine->isIncompatible($request)){
+            $caretaker = app()->make(Caretaker::class);
+
+            $caretaker->tracker($machine)->forgetHistoryAfterCurrent();
+
+            $caretaker->tracker($machine)->unmarkCurrentSnapshot();
+        }
+
         return $machine->update($request->except($machine->getGuarded()));
     }
 

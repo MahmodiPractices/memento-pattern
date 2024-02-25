@@ -26,17 +26,10 @@ class MachineObserver
      */
     public function updated(Machine $machine): void
     {
-        if(empty($machine->snapshots))
-            return;
+        if(!$machine->hasCurrentSnapshot())
+            $machine->store();
 
-        if($machine->hasCurrentSnapshot()){
 
-            $this->snapshotService->tracker($machine)->forgetHistoryAfterCurrent();
-
-            $this->snapshotService->tracker($machine)->unmarkCurrentSnapshot();
-        }
-
-        $machine->store();
     }
 
     /**
