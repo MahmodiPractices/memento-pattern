@@ -77,6 +77,8 @@ class UndoTest extends TestCase
      */
     public function test_makes_new_snapshot_when_there_is_no_any_current_snapshot_in_the_table()
     {
+        $this->injectMementoObjectMockToContainer();
+
         $machine = Machine::factory()->create();
 
         $snapshots = $this->seedSnapshots($machine);
@@ -84,8 +86,6 @@ class UndoTest extends TestCase
         $snapshotsCount = count($snapshots);
 
         $this->assertDatabaseCount($snapshots[0]->getTable(), $snapshotsCount);
-
-        $this->injectMementoObjectMockToContainer();
 
         $res = $this->post(route(self::ROUTE_NAME, $machine));
 
@@ -98,26 +98,29 @@ class UndoTest extends TestCase
 
     /**
      * @return void
+     * @throws Exception
      */
     public function test_does_not_make_new_snapshot_when_there_is_a_current_snapshot_in_the_table()
     {
+        $this->injectMementoObjectMockToContainer();
+
         $machine = Machine::factory()->create();
 
         $snapshotsCount = count($this->seedSnapshots($machine));
 
         $this->travel(1)->hour();
 
-        Snapshot::factory()->for($machine)->current()->create();
+        Snapshot::factory()->for($machine, 'snapshotable')->current()->create();
 
         $this->travel(1)->hour();
 
-        $snapshotsCount += count($this->seedSnapshots($machine));
+        $snapshotsCount += count($this->seedSnapshots($machine)) + 1;
 
         $this->assertDatabaseCount('snapshots', $snapshotsCount);
 
         $res = $this->post(route(self::ROUTE_NAME, $machine));
 
-        $res->assertOk();
+        $res->assertRedirect();
 
         $this->assertDatabaseCount('snapshots', $snapshotsCount);
     }
