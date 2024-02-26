@@ -19,9 +19,12 @@ class CaretakerController extends Controller
      *
      * @param Machine $machine
      * @return RedirectResponse
+     * @throws \Exception
      */
     public function undo(Machine $machine):RedirectResponse
     {
+        $this->authorize('undo', $machine);
+
         $redirect = redirect()->back();
 
         return $this->caretaker
