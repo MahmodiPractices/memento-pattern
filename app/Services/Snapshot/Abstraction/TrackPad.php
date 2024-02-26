@@ -29,6 +29,8 @@ class TrackPad
     {
         $machine = $this->caretaker->getMachine();
 
+        DB::beginTransaction();
+
         try {
             if(!$machine->hasCurrentSnapshot()){
 
@@ -43,13 +45,21 @@ class TrackPad
                 $shouldSetSnapshot = $machine->snapshots()
                     ->where('created_at', '<', $current->created_at)
                     ->latest()->firstOrFail();
+
+                $current->update([
+                    'is_current' => 0,
+                ]);
             }
 
             $shouldSetSnapshot->update([
                 'is_current' => 1
             ]);
 
-            return $machine->restore($shouldSetSnapshot->memento);
+            $res = $machine->restore($shouldSetSnapshot->memento);
+
+            DB::commit();
+
+            return $res;
 
         } catch (Exception $e){
             Log::error("Undo operation failed for {$machine->id} machine id : " . $e->getMessage());

@@ -144,4 +144,40 @@ class UndoTest extends TestCase
 
         $this->assertNotSame($machine->getAttributes(), $updatedMachine->getAttributes());
     }
+
+    /**
+     * @return void
+     */
+    public function test_set_0_for_is_current_field_of_snapshot_that_defined_as_current_before_undo_operation_then_set_1_for_restored_snapshot()
+    {
+        $machine = Machine::factory()->create();
+
+        $this->seedSnapshots($machine);
+
+        $this->travel(1)->minute();
+
+        $shouldBeCurrentAfterUndo = Snapshot::factory()->for($machine, 'snapshotable')->create();
+
+        $this->travel(1)->minute();
+
+        $currentSnapshotBeforeUndo = Snapshot::factory()->for($machine, 'snapshotable')->current()->create();
+
+        $this->travel(1)->minute();
+
+        $this->seedSnapshots($machine);
+
+        $res = $this->post(route(self::ROUTE_NAME, $machine));
+
+        $res->assertRedirect();
+
+        $this->assertDatabaseHas($shouldBeCurrentAfterUndo->getTable(), [
+            'id' => $shouldBeCurrentAfterUndo->id,
+            'is_current' => 1,
+        ]);
+
+        $this->assertDatabaseHas($currentSnapshotBeforeUndo->getTable(), [
+            'id' => $currentSnapshotBeforeUndo->id,
+            'is_current' => 0,
+        ]);
+    }
 }
