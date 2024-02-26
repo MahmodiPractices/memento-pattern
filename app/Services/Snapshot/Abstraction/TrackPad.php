@@ -34,7 +34,7 @@ class TrackPad
                 $shouldSetSnapshot = $machine->snapshots()
                     ->latest()->firstOrFail();
 
-                $machine->store();
+                $this->store(); // take new snapshot before undo changes
             } else {
                 $current = $machine->snapshots()
                     ->where('is_current', 1)->latest()->firstOrFail();
@@ -110,5 +110,26 @@ class TrackPad
         $machine->snapshots()
             ->where('is_current', '!=', '0')
             ->update(['is_current' => '0']);
+    }
+
+    /**
+     * Makes and save new snapshot of machine
+     *
+     * @return Snapshot
+     * @throws \Exception
+     */
+    public function store():Snapshot
+    {
+        $this->forgetHistoryAfterCurrent();
+
+        $this->unmarkCurrentSnapshot();
+
+        $machine = $this->caretaker->getMachine();
+
+        $mementoExport = $machine->store();
+
+        return $machine->snapshots()->create([
+            'memento' => $mementoExport,
+        ]);
     }
 }

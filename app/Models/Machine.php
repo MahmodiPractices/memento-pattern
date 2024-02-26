@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Factory\MementoObject;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -34,10 +35,10 @@ class Machine extends Model
     /**
      * Store machine situation through create new snapshot
      *
-     * @return bool
-     * @throws \Exception
+     * @return string
+     * @throws BindingResolutionException
      */
-    public function store():bool
+    public function store():string
     {
         $memento = app()->make(MementoObject::class, [
             'originator'  => self::class
@@ -46,9 +47,7 @@ class Machine extends Model
         foreach ($this->attributes as $key => $value)
             $memento->set($key, $value);
 
-        return (bool)$this->snapshots()->create([
-            'memento' => $memento->export(),
-        ]);
+        return $memento->export();
     }
 
     /**

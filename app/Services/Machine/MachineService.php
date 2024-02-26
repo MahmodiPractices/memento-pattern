@@ -66,11 +66,7 @@ class MachineService
         if($machine->isIncompatible($request)){
             $caretaker = app()->make(Caretaker::class);
 
-            $caretaker->tracker($machine)->forgetHistoryAfterCurrent();
-
-            $caretaker->tracker($machine)->unmarkCurrentSnapshot();
-
-            $machine->store();
+            $caretaker->tracker($machine)->store();
         }
 
         return $machine->update($request->except($machine->getGuarded()));
