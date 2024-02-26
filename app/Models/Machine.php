@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use App\Factory\MementoObject;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Http\Request;
 
 class Machine extends Model
 {
@@ -33,30 +35,46 @@ class Machine extends Model
     /**
      * Store machine situation through create new snapshot
      *
-     * @return bool
-     * @throws \Exception
+     * @return string
+     * @throws BindingResolutionException
      */
-    public function store():bool
+    public function store():string
     {
-        $memento = new MementoObject();
+        $memento = app()->make(MementoObject::class, [
+            'originator'  => self::class
+        ]);
 
         foreach ($this->attributes as $key => $value)
             $memento->set($key, $value);
 
-        return (bool)$this->snapshots()->create([
-            'memento' => $memento->export(),
-        ]);
+        return $memento->export();
     }
 
     /**
      * Restore machine situation that stored in passed memento argument
      *
-     * @param MementoObject $snapshot
+     * @param string $mementoExport
      * @return bool
+     * @throws \Exception
      */
-    public function restore(MementoObject $snapshot):bool
+    public function restore(string $mementoExport):bool
     {
+        $memento = app()->make(MementoObject::class, [
+            'originator'  => self::class
+        ]);
 
+        $memento->import($mementoExport);
+
+        foreach ($this->attributes as $key => $value){
+            if($key == $this->primaryKey)
+                continue;
+
+            $value = $memento->get($key);
+
+            $this->{$key} = $value;
+        }
+
+        return $this->save();
     }
 
     /**
@@ -77,5 +95,21 @@ class Machine extends Model
     public function currentSnapshot():Snapshot|null
     {
         return $this->snapshots()->where('is_current', 1)->first();
+    }
+
+    /**
+     * Compares itself arguments with request for find different value
+     *
+     * @param Request $request
+     * @return bool
+     */
+    public function isIncompatible(Request $request):bool
+    {
+        foreach ($this->getAttributes() as $key => $value)
+            if($inputValue = $request->input($key))
+                if($inputValue != $value)
+                    return true;
+
+        return false;
     }
 }

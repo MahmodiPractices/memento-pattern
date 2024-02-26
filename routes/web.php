@@ -16,3 +16,14 @@ use Illuminate\Support\Facades\Route;
 Route::view('/', 'home')->name('home');
 
 Route::resource('machine', \App\Http\Controllers\MachineController::class);
+
+Route::name('caretaker.')
+    ->prefix('/caretaker')
+    ->controller(\App\Http\Controllers\CaretakerController::class)
+    ->group(function (){
+
+        Route::post('/undo/{machine}', 'undo')->name('undo');
+
+        Route::post('/redo/{machine}', 'redo')->name('redo');
+
+    });

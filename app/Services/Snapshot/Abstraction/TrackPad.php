@@ -4,6 +4,8 @@ namespace App\Services\Snapshot\Abstraction;
 
 use App\Models\Snapshot;
 use App\Services\Snapshot\Caretaker;
+use Illuminate\Support\Facades\Log;
+use Mockery\Exception;
 
 class TrackPad
 {
@@ -20,10 +22,39 @@ class TrackPad
      * Undo changes operations
      *
      * @return bool
+     * @throws \Exception
      */
     public function undo(): bool
     {
+        $machine = $this->caretaker->getMachine();
 
+        try {
+            if(!$machine->hasCurrentSnapshot()){
+
+                $shouldSetSnapshot = $machine->snapshots()
+                    ->latest()->firstOrFail();
+
+                $this->store(); // take new snapshot before undo changes
+            } else {
+                $current = $machine->snapshots()
+                    ->where('is_current', 1)->latest()->firstOrFail();
+
+                $shouldSetSnapshot = $machine->snapshots()
+                    ->where('created_at', '<', $current->created_at)
+                    ->latest()->firstOrFail();
+            }
+
+            $shouldSetSnapshot->update([
+                'is_current' => 1
+            ]);
+
+            return $machine->restore($shouldSetSnapshot->memento);
+
+        } catch (Exception $e){
+            Log::error("Undo operation failed for {$machine->id} machine id : " . $e->getMessage());
+
+            return false;
+        }
     }
 
     /**
@@ -79,5 +110,26 @@ class TrackPad
         $machine->snapshots()
             ->where('is_current', '!=', '0')
             ->update(['is_current' => '0']);
+    }
+
+    /**
+     * Makes and save new snapshot of machine
+     *
+     * @return Snapshot
+     * @throws \Exception
+     */
+    public function store():Snapshot
+    {
+        $this->forgetHistoryAfterCurrent();
+
+        $this->unmarkCurrentSnapshot();
+
+        $machine = $this->caretaker->getMachine();
+
+        $mementoExport = $machine->store();
+
+        return $machine->snapshots()->create([
+            'memento' => $mementoExport,
+        ]);
     }
 }

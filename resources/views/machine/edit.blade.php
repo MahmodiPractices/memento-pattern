@@ -7,6 +7,7 @@
 @section('script')
     <script src="{{ asset('assets/vendor/libs/nouislider/nouislider.js') }}"></script>
 
+{{--    sliders setter --}}
     <script>
         function sliderFactory(ele, min, max, step = 1, start = [1]) {
             noUiSlider.create(ele, {
@@ -74,7 +75,25 @@
     <div class="col-12">
         <x-alert/>
         <div class="card mb-4">
-            <h5 class="card-header heading-color mb-0 pb-0">ویرایش دستگاه {{ $machine->name }}</h5>
+            <div class="d-flex justify-content-between">
+                <h5 class="card-header heading-color mb-0 pb-0">ویرایش دستگاه {{ $machine->name }}</h5>
+                <div class="col-2 mt-3 mx-5 d-flex align-items-center justify-content-end">
+                    @can('undo', $machine)
+                        <form action="{{ route('caretaker.undo', $machine) }}" method="post" id="undo-form" class="form-inline">
+                            @csrf
+                            <button type="submit"
+                                    class="btn rounded-pill me-2 btn-primary btn-sm">واگرد</button>
+                        </form>
+                    @endcan
+                    @can('redo', $machine)
+                        <form action="{{ route('caretaker.redo', $machine) }}" method="post" id="redo-form" class="form-inline">
+                            @csrf
+                            <button type="submit"
+                                    class="btn rounded-pill me-2 btn-warning btn-sm">پیشگرد</button>
+                        </form>
+                    @endcan
+                </div>
+            </div>
             <div class="card-body">
                 <form action="{{ route('machine.update', $machine) }}" method="post" class="row justify-content-end">
                     @csrf
@@ -104,16 +123,7 @@
                         <small class="text-light fw-semibold">میزان حافظه دائمی GB :</small>
                         <div id="storage-capacity"></div>
                     </dib>
-                    <div class="row d-flex justify-content-between">
-                        <div class="col-2 mt-5">
-                            @can('undo', $machine)
-                                <button type="submit" class="btn rounded-pill me-2 btn-primary">واگرد</button>
-                            @endcan
-                            @can('redo', $machine)
-                                <a href="{{ route('machine.index') }}"
-                                   class="btn rounded-pill me-2 btn-warning">پیشگرد</a>
-                            @endcan
-                        </div>
+                    <div class="row d-flex justify-content-end">
                         <div class="col-3 mt-5 mx-4 d-flex justify-content-end">
                             <button type="submit" class="btn rounded-pill me-2 btn-primary">ویرایش</button>
                             <a href="{{ route('machine.index') }}" class="btn rounded-pill me-2 btn-warning">انصراف</a>
