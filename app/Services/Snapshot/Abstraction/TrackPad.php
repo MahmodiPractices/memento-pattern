@@ -4,6 +4,7 @@ namespace App\Services\Snapshot\Abstraction;
 
 use App\Models\Snapshot;
 use App\Services\Snapshot\Caretaker;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Mockery\Exception;
 
@@ -61,10 +62,37 @@ class TrackPad
      * Redo changes operations
      *
      * @return bool
+     * @throws \Exception
      */
     public function redo(): bool
     {
+        $machine = $this->caretaker->getMachine();
 
+        if(!$current = $machine->currentSnapshot()){
+            Log::error('Redo method called when entry machine has not any current snapshot !');
+
+            return false;
+        }
+
+        $snapshot = $machine->snapshots()
+            ->where('created_at', '>', $current->created_at)
+            ->firstOrFail();
+
+        DB::beginTransaction();
+
+        $snapshot->update([
+            'is_current' => '1'
+        ]);
+
+        $current->update([
+            'is_current' => 0,
+        ]);
+
+        $res = $machine->restore($snapshot->memento);
+
+        DB::commit();
+
+        return $res;
     }
 
     /**

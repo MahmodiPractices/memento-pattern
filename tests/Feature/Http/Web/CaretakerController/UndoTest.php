@@ -5,6 +5,7 @@ namespace Tests\Feature\Http\Web\CaretakerController;
 use App\Factory\MementoObject;
 use App\Models\Machine;
 use App\Models\Snapshot;
+use Tests\Feature\Http\Web\CaretakerController\HasMockedMementoObject;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -14,6 +15,8 @@ use Tests\TestCase;
 
 class UndoTest extends TestCase
 {
+    use HasMockedMementoObject;
+
     /**
      * Undo route name
      */
@@ -38,45 +41,6 @@ class UndoTest extends TestCase
         return Snapshot::factory()->for($machine, 'snapshotable')->count(rand(1, 10))->create();
     }
 
-    /**
-     * @param Machine $machine
-     * @return MementoObject
-     * @throws Exception
-     */
-    private function mementoObjectMockBuilder(Machine $machine):MementoObject
-    {
-        $mock = $this->createMock(MementoObject::class);
-
-        $mock->method('__call')
-            ->willReturnCallback(function($name, $args) use ($machine){
-                if($name == 'set')
-                    return;
-
-                if($name == 'get')
-                    if(isset($machine->{$args[0]}))
-                        return $machine->{$args[0]};
-
-                if($name == 'export')
-                    return Str::random();
-
-                return;
-            });
-
-        return $mock;
-    }
-
-    /**
-     * @return void
-     * @throws Exception
-     */
-    private function injectMementoObjectMockToContainer(?Machine $machine  = null)
-    {
-        $machine = $machine ?? Machine::factory()->make();
-
-        $this->app->bind(MementoObject::class, function($app, $parameters) use ($machine){
-            return $this->mementoObjectMockBuilder($machine);
-        });
-    }
 
     /**
      * @return void
