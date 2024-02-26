@@ -44,13 +44,18 @@ class RedoTest extends TestCase
 
         $res->assertRedirect();
 
-        $currentSnapshot->is_current = 0;
-
-        $this->assertDatabaseMissing($currentSnapshot->getTable(), $currentSnapshot->getAttributes());
+        $this->assertDatabaseHas($currentSnapshot->getTable(), [
+            'id' => $currentSnapshot->id,
+            'is_current' => 0
+        ]);
 
         $shouldBeCurrentSnapshot->is_current = 1;
 
-        $this->assertDatabaseHas($shouldBeCurrentSnapshot->getTable(), $shouldBeCurrentSnapshot->getAttributes());
+        $this->assertDatabaseHas($shouldBeCurrentSnapshot->getTable(), [
+            'is_current' => 1,
+            'memento' => $shouldBeCurrentSnapshot->memento,
+            'id' => $shouldBeCurrentSnapshot->id,
+        ]);
 
         $this->assertDatabaseHas($machine->getTable(), $machineAfterRedo->getAttributes());
     }

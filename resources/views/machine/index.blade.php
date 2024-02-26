@@ -10,7 +10,7 @@
                     <span class="px-2">ایجاد دستگاه جدید</span>
                 </a>
             </div>
-            <div class="table-responsive text-nowrap">
+            <div class="text-nowrap">
                 <table class="table">
                     <thead>
                     <tr>
